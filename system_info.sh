@@ -105,6 +105,17 @@ echo "运行时长:     $uptime_formatted"
 YELLOW='\033[1;33m'
 NC='\033[0m' # 颜色重置
 
+# 检查 fio 是否已安装，如果没有则自动安装
+if ! command -v fio &> /dev/null
+then
+    echo "fio 没有安装，正在安装..."
+    sudo apt update && sudo apt install -y fio
+    if [ $? -ne 0 ]; then
+        echo "fio 安装失败，请检查网络连接或系统设置！"
+        exit 1
+    fi
+fi
+
 # 显示测试进行中的消息
 echo -e "\n\n\n${YELLOW}硬盘 I/O 性能测试${NC}\n"
 echo "硬盘性能测试正在进行中..."
