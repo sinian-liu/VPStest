@@ -207,7 +207,7 @@ company_domain=$(echo "$ip_info" | jq -r '.company.domain // "N/A"')
 company_type=$(echo "$ip_info" | jq -r '.company.type // "N/A"')
 
 # 输出查询结果
-echo "$(_yellow "IP info信息查询结果如下：")"
+echo -e "\n\n\n$(_yellow "IP info信息查询结果如下：")"
 echo "-------------------"
 echo "IP 地址:         $ip_address"
 echo "城市:            $city"
