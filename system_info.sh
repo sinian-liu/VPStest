@@ -109,9 +109,8 @@ perform_test() {
     # 使用 dd 命令进行写入测试，写入 1GB 数据
     result=$(dd if=/dev/zero of=$test_file bs=1M count=1024 oflag=direct 2>&1 | tail -n 1)
 
-    # 提取性能数据并转换为 MB/s
-    write_speed=$(echo "$result" | grep -oP '\d+\.\d+ [KMGT]B/s' | awk '{print $1}')
-    echo "$write_speed"
+    # 提取写入速度（MB/s 或 GB/s）并返回
+    echo "$result" | grep -oP '\d+\.\d+ [GM]B/s'
 }
 
 # 清理临时文件
@@ -119,23 +118,19 @@ cleanup() {
     rm -f $test_file
 }
 
-# 运行 3 次性能测试
+# 开始性能测试
 echo "硬盘性能测试正在进行中..."
 
-# 第一次测试
+# 运行三次测试
 first_test=$(perform_test)
-
-# 第二次测试
 second_test=$(perform_test)
-
-# 第三次测试
 third_test=$(perform_test)
 
 # 清理
 cleanup
 
-# 输出结果
-echo "测试完成！"
+# 输出格式化结果
+echo -e "\n硬盘性能测试结果如下："
 printf "%-25s %s\n" "硬盘I/O (第一次测试) :" "$first_test"
 printf "%-25s %s\n" "硬盘I/O (第二次测试) :" "$second_test"
 printf "%-25s %s\n" "硬盘I/O (第三次测试) :" "$third_test"
