@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# 颜色定义
+YELLOW='\033[1;33m'
+NC='\033[0m' # 重置颜色
+
+# 格式化输出为黄色
+_yellow() {
+    echo -e "${YELLOW}$1${NC}"
+}
+
 # 主机名和系统信息
 hostname=$(hostname)
 domain=$(hostname -d)
@@ -71,6 +80,8 @@ else
 fi
 
 # 输出优化的格式化信息
+echo -e "\n${_yellow}系统信息查询${NC}"
+echo "-------------"
 echo "主机名:       $hostname.$domain"
 echo "系统版本:     $os_version"
 echo "Linux版本:    $kernel_version"
