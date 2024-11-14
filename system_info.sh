@@ -23,12 +23,23 @@ swap_usage=$(free -m | awk '/Swap:/ {if ($2 > 0) printf "%.2f/%.2f MB (%.2f%%)",
 # 硬盘使用
 disk_usage=$(df -h / | awk 'NR==2 {print $3 "/" $2 " (" $5 ")"}')
 
-# 网络流量
-total_rx=$(cat /proc/net/dev | grep eth0 | awk '{printf "%.2f MB", $2 / 1024 / 1024}')
-total_tx=$(cat /proc/net/dev | grep eth0 | awk '{printf "%.2f MB", $10 / 1024 / 1024}')
+# 总接收和总发送流量
+get_network_traffic() {
+    local bytes=$1
+    if (( bytes > 1024*1024*1024 )); then
+        echo "$(awk "BEGIN {printf \"%.2f GB\", $bytes/1024/1024/1024}")"
+    elif (( bytes > 1024*1024 )); then
+        echo "$(awk "BEGIN {printf \"%.2f MB\", $bytes/1024/1024}")"
+    else
+        echo "$(awk "BEGIN {printf \"%.2f KB\", $bytes/1024}")"
+    fi
+}
 
-# TCP算法
-tcp_algo=$(sysctl net.ipv4.tcp_congestion_control | awk '{print $3}')
+total_rx=$(get_network_traffic $(cat /proc/net/dev | grep -w 'eth0' | awk '{print $2}'))
+total_tx=$(get_network_traffic $(cat /proc/net/dev | grep -w 'eth0' | awk '{print $10}'))
+
+# 网络算法
+tcp_algo=$(sysctl -n net.ipv4.tcp_congestion_control)
 
 # 网络信息
 ip_info=$(curl -s ipinfo.io)
@@ -45,9 +56,15 @@ sys_time=$(date "+%Y-%m-%d %H:%M %p")
 
 # 获取系统运行时间并格式化
 uptime_seconds=$(cat /proc/uptime | awk '{print int($1)}')
-uptime_hours=$((uptime_seconds / 3600))
+uptime_days=$((uptime_seconds / 86400))
+uptime_hours=$(( (uptime_seconds % 86400) / 3600 ))
 uptime_minutes=$(( (uptime_seconds % 3600) / 60 ))
-uptime_formatted="${uptime_hours}时 ${uptime_minutes}分"
+
+if (( uptime_days > 0 )); then
+    uptime_formatted="${uptime_days}天 ${uptime_hours}时 ${uptime_minutes}分"
+else
+    uptime_formatted="${uptime_hours}时 ${uptime_minutes}分"
+fi
 
 # 输出优化的格式化信息
 echo "主机名:       $hostname.$domain"
