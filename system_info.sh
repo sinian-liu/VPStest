@@ -98,30 +98,23 @@ echo "地理位置:     $location"
 echo "系统时间:     $timezone $sys_time"
 echo "-------------"
 echo "运行时长:     $uptime_formatted"
+
 #!/bin/bash
 
 # ANSI颜色代码：黄色
 YELLOW='\033[1;33m'
 NC='\033[0m' # 颜色重置
 
-# 硬盘性能测试函数
-perform_test() {
-    # 临时文件路径
-    test_file="/tmp/testfile"
-    
-    # 使用 dd 命令进行写入测试，写入 1GB 数据
-    result=$(dd if=/dev/zero of=$test_file bs=1M count=1024 oflag=direct 2>&1 | grep -oP '\d+\.\d+ [GM]B/s')
-    
-    # 删除测试文件
-    rm -f $test_file
-
-    # 输出测试结果
-    echo "$result"
-}
-
 # 显示测试进行中的消息
 echo -e "\n\n\n${YELLOW}硬盘 I/O 性能测试${NC}\n"
 echo "硬盘性能测试正在进行中..."
+
+# 硬盘性能测试函数
+perform_test() {
+    # 使用 fio 命令执行测试
+    result=$(fio --name=seqwrite --ioengine=libaio --rw=write --bs=1M --size=1G --numjobs=1 --time_based --runtime=10 --group_reporting | grep -oP '(?<=bw=)\d+.\d+ [KMGT]B/s')
+    echo "$result"
+}
 
 # 运行三次测试并捕获结果
 first_test=$(perform_test)
