@@ -1,5 +1,68 @@
 #!/bin/bash
 
+# 定义README文件路径
+README_FILE="/etc/v2ray-agent/README.txt"
+SN_CMD="/usr/local/bin/sn"
+
+# 步骤 1: 检查并安装必要的依赖（如果缺少 jq 和 curl）
+echo "检测并安装依赖..."
+if ! command -v jq &>/dev/null; then
+    echo "未安装 jq，正在安装..."
+    apt-get update && apt-get install -y jq
+else
+    echo "jq 已安装"
+fi
+
+if ! command -v curl &>/dev/null; then
+    echo "未安装 curl，正在安装..."
+    apt-get install -y curl
+else
+    echo "curl 已安装"
+fi
+
+# 步骤 2: 修改文件路径（根据需求修改）
+echo "步骤 2: 修改文件路径..."
+# 例如，如果你需要修改 README 文件路径，可以在这里进行操作
+# 如果没有额外修改步骤，可以跳过
+
+# 步骤 3: 确保文件权限
+echo "步骤 3: 确保文件权限..."
+# 设置文件的读写权限（如果需要）
+chmod 644 "$README_FILE"
+echo "文件权限已更新：$README_FILE"
+
+# 步骤 4: 创建符号链接
+echo "步骤 4: 创建符号链接..."
+if [ ! -f "$SN_CMD" ]; then
+    ln -s /etc/v2ray-agent/install.sh "$SN_CMD"
+    echo "符号链接已创建：$SN_CMD"
+else
+    echo "符号链接已存在：$SN_CMD"
+fi
+
+# 步骤 5: 更新环境变量
+echo "步骤 5: 更新环境变量..."
+# 将 /usr/local/bin 添加到系统的 PATH 中，确保 sn 命令可用
+if ! grep -q "/usr/local/bin" /etc/profile; then
+    echo 'export PATH=$PATH:/usr/local/bin' >> /etc/profile
+    echo "已将 /usr/local/bin 添加到 PATH"
+    source /etc/profile
+else
+    echo "/usr/local/bin 已在 PATH 中"
+fi
+
+# 步骤 6: 验证
+echo "步骤 6: 验证..."
+if [ -f "$SN_CMD" ]; then
+    echo "验证成功：可以通过 sn 命令运行脚本"
+else
+    echo "验证失败：未能找到 sn 命令"
+fi
+
+# 额外提示：首次安装后，提示用户下次输入 sn 运行
+echo -e "\033[1;33m首次安装后，下次直接输入 sn 即可打开脚本。\033[0m"
+#!/bin/bash
+
 # 更新系统
 update_system() {
     echo "正在检查并更新系统..."
