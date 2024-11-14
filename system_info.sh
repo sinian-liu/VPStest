@@ -26,17 +26,21 @@ disk_usage=$(df -h / | awk 'NR==2 {print $3 "/" $2 " (" $5 ")"}')
 # 总接收和总发送流量
 get_network_traffic() {
     local bytes=$1
-    if (( bytes > 1024*1024*1024 )); then
+    if [ -n "$bytes" ] && (( bytes > 1024*1024*1024 )); then
         echo "$(awk "BEGIN {printf \"%.2f GB\", $bytes/1024/1024/1024}")"
-    elif (( bytes > 1024*1024 )); then
+    elif [ -n "$bytes" ] && (( bytes > 1024*1024 )); then
         echo "$(awk "BEGIN {printf \"%.2f MB\", $bytes/1024/1024}")"
-    else
+    elif [ -n "$bytes" ]; then
         echo "$(awk "BEGIN {printf \"%.2f KB\", $bytes/1024}")"
+    else
+        echo "0 KB"
     fi
 }
 
-total_rx=$(get_network_traffic $(cat /proc/net/dev | grep -w 'eth0' | awk '{print $2}'))
-total_tx=$(get_network_traffic $(cat /proc/net/dev | grep -w 'eth0' | awk '{print $10}'))
+# 网络接口
+interface=$(ip route | grep '^default' | awk '{print $5}')
+total_rx=$(get_network_traffic $(cat /proc/net/dev | grep -w "$interface" | awk '{print $2}'))
+total_tx=$(get_network_traffic $(cat /proc/net/dev | grep -w "$interface" | awk '{print $10}'))
 
 # 网络算法
 tcp_algo=$(sysctl -n net.ipv4.tcp_congestion_control)
