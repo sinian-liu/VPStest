@@ -227,3 +227,17 @@ echo "公司信息："
 echo "公司名称:        $company_name"
 echo "公司域名:        $company_domain"
 echo "公司类型:        $company_type"
+
+IP质量检测
+#!/bin/bash
+
+# 获取并自动输入 'y' 安装脚本
+bash <(curl -Ls IP.Check.Place) <<< "y"
+
+#!/bin/bash
+
+# 执行第一个安装脚本
+curl https://raw.githubusercontent.com/zhanghanyun/backtrace/main/install.sh -sSf | sh
+
+# 执行第二个安装脚本
+curl https://raw.githubusercontent.com/zhucaidan/mtr_trace/main/mtr_trace.sh | bash
