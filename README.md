@@ -1,8 +1,8 @@
 ```
 bash <(curl -sL https://raw.githubusercontent.com/sinian-liu/test/main/system_info.sh)
 ```
-包含以下功能：
-1.更新系统,检查并安装jq、curl、dd、fio
+## 包含以下功能：
+- 1.更新系统,检查并安装jq、curl、dd、fio
 2.检查主机名和系统信息
 3.硬盘I/O性能进行三次测试
 4.IPinfo检测IP类型
