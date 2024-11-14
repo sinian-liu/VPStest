@@ -1,5 +1,81 @@
 #!/bin/bash
 
+# 更新系统
+update_system() {
+    echo "正在检查并更新系统..."
+    # 检查系统是否为 Debian/Ubuntu 或 CentOS
+    if [[ -f /etc/debian_version ]]; then
+        # Debian/Ubuntu 系统
+        sudo apt update && sudo apt upgrade -y
+    elif [[ -f /etc/redhat-release ]]; then
+        # CentOS 系统
+        sudo yum update -y
+    else
+        echo "未知的系统类型，跳过更新。"
+    fi
+}
+
+# 检测并安装必要的工具
+install_required_tools() {
+    echo "检查并安装缺少的工具..."
+
+    # 检查并安装 jq
+    if ! command -v jq &>/dev/null; then
+        echo "jq 未安装，正在安装..."
+        if [[ -f /etc/debian_version ]]; then
+            sudo apt install -y jq
+        elif [[ -f /etc/redhat-release ]]; then
+            sudo yum install -y jq
+        fi
+    else
+        echo "jq 已安装。"
+    fi
+
+    # 检查并安装 curl
+    if ! command -v curl &>/dev/null; then
+        echo "curl 未安装，正在安装..."
+        if [[ -f /etc/debian_version ]]; then
+            sudo apt install -y curl
+        elif [[ -f /etc/redhat-release ]]; then
+            sudo yum install -y curl
+        fi
+    else
+        echo "curl 已安装。"
+    fi
+
+    # 检查并安装 dd (通常 dd 工具是默认安装的)
+    if ! command -v dd &>/dev/null; then
+        echo "dd 未安装，正在安装..."
+        if [[ -f /etc/debian_version ]]; then
+            sudo apt install -y coreutils
+        elif [[ -f /etc/redhat-release ]]; then
+            sudo yum install -y coreutils
+        fi
+    else
+        echo "dd 已安装。"
+    fi
+
+    # 检查并安装 fio
+    if ! command -v fio &>/dev/null; then
+        echo "fio 未安装，正在安装..."
+        if [[ -f /etc/debian_version ]]; then
+            sudo apt install -y fio
+        elif [[ -f /etc/redhat-release ]]; then
+            sudo yum install -y fio
+        fi
+    else
+        echo "fio 已安装。"
+    fi
+}
+
+# 执行更新和工具安装
+update_system
+install_required_tools
+
+# 继续执行您的其他脚本逻辑...
+
+#!/bin/bash
+
 # 颜色定义
 YELLOW='\033[1;33m'
 NC='\033[0m' # 重置颜色
