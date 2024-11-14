@@ -98,3 +98,56 @@ echo "地理位置:     $location"
 echo "系统时间:     $timezone $sys_time"
 echo "-------------"
 echo "运行时长:     $uptime_formatted"
+
+#!/bin/bash
+
+# 临时文件路径
+test_file="/tmp/testfile"
+
+# 硬盘性能测试函数
+perform_test() {
+    # 记录开始时间
+    start_time=$(date +%s%3N)
+
+    # 使用 dd 命令进行写入测试，写入 1GB 数据
+    dd if=/dev/zero of=$test_file bs=1M count=1024 oflag=direct 2>&1 | tail -n 1
+
+    # 记录结束时间
+    end_time=$(date +%s%3N)
+
+    # 计算时间差
+    elapsed_time=$((end_time - start_time))
+
+    # 计算带宽 (MB/s)
+    write_speed=$(echo "scale=2; 1024 / ($elapsed_time / 1000)" | bc)
+    echo "$write_speed MB/s"
+}
+
+# 清理临时文件
+cleanup() {
+    rm -f $test_file
+}
+
+# 运行 3 次性能测试
+echo "硬盘性能测试正在进行中..."
+
+# 第一次测试
+echo -n "硬盘I/O (第一次测试) : "
+first_test=$(perform_test)
+
+# 第二次测试
+echo -n "硬盘I/O (第二次测试) : "
+second_test=$(perform_test)
+
+# 第三次测试
+echo -n "硬盘I/O (第三次测试) : "
+third_test=$(perform_test)
+
+# 清理
+cleanup
+
+# 输出结果
+echo "测试完成！"
+echo "硬盘I/O (第一次测试) : $first_test"
+echo "硬盘I/O (第二次测试) : $second_test"
+echo "硬盘I/O (第三次测试) : $third_test"
