@@ -228,18 +228,32 @@ echo "公司名称:        $company_name"
 echo "公司域名:        $company_domain"
 echo "公司类型:        $company_type"
 
-IP质量检测
 #!/bin/bash
 
+# IP质量检测
 # 获取并自动输入 'y' 安装脚本
 bash <(curl -Ls IP.Check.Place) <<< "y"
-
-#!/bin/bash
 
 # 执行第一个三网回程线路脚本
 curl https://raw.githubusercontent.com/zhanghanyun/backtrace/main/install.sh -sSf | sh
 
 # 执行第二个三网回程线路脚本
 curl https://raw.githubusercontent.com/zhucaidan/mtr_trace/main/mtr_trace.sh | bash
+
 # 安装并运行三网+教育网 IPv4 单线程测速脚本，并自动输入 '2'
 bash <(curl -sL https://raw.githubusercontent.com/i-abc/Speedtest/main/speedtest.sh) <<< "2"
+
+# 检查 curl 是否已安装，若未安装则自动安装
+if ! command -v curl &>/dev/null; then
+    echo "curl 未安装，正在安装..."
+    apt update && apt install -y curl
+else
+    echo "curl 已安装，跳过安装。"
+fi
+
+# 执行 c流媒体平台及游戏区域限制测试脚本并自动输入 '66'
+bash <(curl -L -s check.unlock.media) <<< "66"
+
+
+
+
