@@ -1,38 +1,36 @@
 #!/bin/bash
 
-# 主机名
+# 主机名和系统信息
 hostname=$(hostname)
 domain=$(hostname -d)
-
-# 系统版本信息
 os_version=$(lsb_release -d | awk -F"\t" '{print $2}')
 kernel_version=$(uname -r)
 
 # CPU信息
 cpu_arch=$(uname -m)
-cpu_model=$(lscpu | grep "Model name:" | awk -F": " '{print $2}')
-cpu_cores=$(lscpu | grep "^CPU(s):" | awk '{print $2}')
-cpu_frequency=$(lscpu | grep "MHz" | awk '{print $3 / 1000 " GHz"}')
-cpu_usage=$(top -bn1 | grep "Cpu(s)" | awk '{print $2 + $4 "%"}')
+cpu_model=$(awk -F': ' '/model name/ {print $2; exit}' /proc/cpuinfo | xargs)
+cpu_cores=$(grep -c ^processor /proc/cpuinfo)
+cpu_frequency=$(awk -F': ' '/cpu MHz/ {print $2; exit}' /proc/cpuinfo | awk '{printf "%.4f GHz", $1 / 1000}')
+cpu_usage=$(top -bn1 | grep "Cpu(s)" | awk '{printf "%.1f%%", $2 + $4}')
 
 # 系统负载
 load_avg=$(uptime | awk -F'load average: ' '{print $2}')
 
 # 内存信息
-memory_usage=$(free -m | awk '/Mem:/ {printf "%.2f/%.2f MB (%.2f%)", $3, $2, $3/$2 * 100}')
-swap_usage=$(free -m | awk '/Swap:/ {printf "%.2f/%.2f MB (%.2f%)", $3, $2, $3/$2 * 100}')
+memory_usage=$(free -m | awk '/Mem:/ {printf "%.2f/%.2f MB (%.2f%%)", $3, $2, $3/$2 * 100}')
+swap_usage=$(free -m | awk '/Swap:/ {if ($2 > 0) printf "%.2f/%.2f MB (%.2f%%)", $3, $2, $3/$2 * 100; else print "N/A"}')
 
 # 硬盘使用
 disk_usage=$(df -h / | awk 'NR==2 {print $3 "/" $2 " (" $5 ")"}')
 
 # 网络流量
-total_rx=$(cat /proc/net/dev | grep eth0 | awk '{print $2 / 1024 / 1024 " MB"}')
-total_tx=$(cat /proc/net/dev | grep eth0 | awk '{print $10 / 1024 / 1024 " MB"}')
+total_rx=$(cat /proc/net/dev | grep eth0 | awk '{printf "%.2f MB", $2 / 1024 / 1024}')
+total_tx=$(cat /proc/net/dev | grep eth0 | awk '{printf "%.2f MB", $10 / 1024 / 1024}')
 
 # TCP算法
 tcp_algo=$(sysctl net.ipv4.tcp_congestion_control | awk '{print $3}')
 
-# 运营商信息和IP地址
+# 网络信息
 ip_info=$(curl -s ipinfo.io)
 ipv4=$(echo "$ip_info" | jq -r '.ip')
 isp=$(echo "$ip_info" | jq -r '.org')
@@ -45,7 +43,7 @@ sys_time=$(date "+%Y-%m-%d %H:%M %p")
 # 系统运行时间
 uptime_info=$(uptime -p)
 
-# 输出格式化信息
+# 输出优化的格式化信息
 echo "主机名:       $hostname.$domain"
 echo "系统版本:     $os_version"
 echo "Linux版本:    $kernel_version"
