@@ -329,10 +329,9 @@ fi
 
 # 执行流媒体平台及游戏区域限制测试脚本并自动输入 '66'
 bash <(curl -L -s check.unlock.media) <<< "66"
-
-# 执行 Bench 性能测试并自动回车运行
-curl -Lso- bench.sh | bash
 # 全国五网ISP路由回程测试
 curl -s https://nxtrace.org/nt | bash && sleep 2 && echo -e "1\n6" | nexttrace --fast-trace
+# 执行 Bench 性能测试并自动回车运行
+curl -Lso- bench.sh | bash
 
 
