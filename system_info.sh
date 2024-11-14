@@ -36,12 +36,18 @@ ipv4=$(echo "$ip_info" | jq -r '.ip')
 isp=$(echo "$ip_info" | jq -r '.org')
 location=$(echo "$ip_info" | jq -r '.city + ", " + .country')
 
+# DNS地址
+dns_address=$(awk '/^nameserver/ {print $2}' /etc/resolv.conf | tr '\n' ' ' | xargs)
+
 # 系统时间
 timezone=$(timedatectl | grep "Time zone" | awk '{print $3}')
 sys_time=$(date "+%Y-%m-%d %H:%M %p")
 
-# 系统运行时间
-uptime_info=$(uptime -p)
+# 获取系统运行时间并格式化
+uptime_seconds=$(cat /proc/uptime | awk '{print int($1)}')
+uptime_hours=$((uptime_seconds / 3600))
+uptime_minutes=$(( (uptime_seconds % 3600) / 60 ))
+uptime_formatted="${uptime_hours}时 ${uptime_minutes}分"
 
 # 输出优化的格式化信息
 echo "主机名:       $hostname.$domain"
@@ -66,8 +72,8 @@ echo "网络算法:     $tcp_algo"
 echo "-------------"
 echo "运营商:       $isp"
 echo "IPv4地址:     $ipv4"
-echo "DNS地址:      127.0.0.53"
+echo "DNS地址:      $dns_address"
 echo "地理位置:     $location"
 echo "系统时间:     $timezone $sys_time"
 echo "-------------"
-echo "运行时长:     $uptime_info"
+echo "运行时长:     $uptime_formatted"
