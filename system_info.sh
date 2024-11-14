@@ -101,39 +101,70 @@ echo "运行时长:     $uptime_formatted"
 
 #!/bin/bash
 
-# ANSI颜色代码：黄色
+# 颜色定义
 YELLOW='\033[1;33m'
-NC='\033[0m' # 颜色重置
+RED='\033[0;31m'
+NC='\033[0m' # 重置颜色
 
-# 检查 fio 是否已安装，如果没有则自动安装
-if ! command -v fio &> /dev/null
-then
-    echo "fio 没有安装，正在安装..."
-    sudo apt update && sudo apt install -y fio
-    if [ $? -ne 0 ]; then
-        echo "fio 安装失败，请检查网络连接或系统设置！"
-        exit 1
-    fi
-fi
+# 格式化输出为黄色
+_yellow() {
+    echo -e "${YELLOW}$1${NC}"
+}
 
-# 显示测试进行中的消息
-echo -e "\n\n\n${YELLOW}硬盘 I/O 性能测试${NC}\n"
-echo "硬盘性能测试正在进行中..."
+# 格式化输出为红色
+_red() {
+    echo -e "${RED}$1${NC}"
+}
 
-# 硬盘性能测试函数
-perform_test() {
-    # 使用 fio 命令执行测试
-    result=$(fio --name=seqwrite --ioengine=libaio --rw=write --bs=1M --size=1G --numjobs=1 --time_based --runtime=10 --group_reporting | grep -oP '(?<=bw=)\d+.\d+ [KMGT]B/s')
+# 模拟硬盘 I/O 性能测试函数 (需要根据你的系统实际情况替换为真实的 I/O 测试命令)
+io_test() {
+    # 模拟硬盘测试命令 (这里使用 dd 作为示例)
+    result=$(dd if=/dev/zero of=tempfile bs=1M count=$1 oflag=direct 2>&1 | grep -oP '[0-9.]+ (MB|GB)/s')
+    rm -f tempfile  # 删除临时文件
     echo "$result"
 }
 
-# 运行三次测试并捕获结果
-first_test=$(perform_test)
-second_test=$(perform_test)
-third_test=$(perform_test)
+# 打印硬盘性能测试结果
+print_io_test() {
+    freespace=$(df -m . | awk 'NR==2 {print $4}')
+    if [ -z "${freespace}" ]; then
+        freespace=$(df -m . | awk 'NR==3 {print $3}')
+    fi
 
-# 输出格式化的硬盘性能测试结果
-echo -e "\n硬盘性能测试结果如下："
-printf "%-25s %s\n" "硬盘I/O (第一次测试) :" "$first_test"
-printf "%-25s %s\n" "硬盘I/O (第二次测试) :" "$second_test"
-printf "%-25s %s\n" "硬盘I/O (第三次测试) :" "$third_test"
+    if [ "${freespace}" -gt 1024 ]; then
+        writemb=2048  # 设置写入的 MB 大小
+        echo -e "\n\n\n${YELLOW}硬盘 I/O 性能测试${NC}\n"
+        echo "硬盘性能测试正在进行中..."
+        
+        # 执行三次测试
+        io1=$(io_test ${writemb})
+        io2=$(io_test ${writemb})
+        io3=$(io_test ${writemb})
+        
+        # 提取测试结果并转换单位为 MB/s
+        ioraw1=$(echo "$io1" | awk 'NR==1 {print $1}')
+        [[ "$(echo "$io1" | awk 'NR==1 {print $2}')" == "GB/s" ]] && ioraw1=$(awk 'BEGIN{print '"$ioraw1"' * 1024}')
+        
+        ioraw2=$(echo "$io2" | awk 'NR==1 {print $1}')
+        [[ "$(echo "$io2" | awk 'NR==1 {print $2}')" == "GB/s" ]] && ioraw2=$(awk 'BEGIN{print '"$ioraw2"' * 1024}')
+        
+        ioraw3=$(echo "$io3" | awk 'NR==1 {print $1}')
+        [[ "$(echo "$io3" | awk 'NR==1 {print $2}')" == "GB/s" ]] && ioraw3=$(awk 'BEGIN{print '"$ioraw3"' * 1024}')
+
+        # 计算总和和平均值
+        ioall=$(awk 'BEGIN{print '"$ioraw1"' + '"$ioraw2"' + '"$ioraw3"'}')
+        ioavg=$(awk 'BEGIN{printf "%.2f", '"$ioall"' / 3}')
+        
+        # 格式化输出结果
+        echo -e "\n硬盘性能测试结果如下："
+        printf "%-25s %s\n" "硬盘I/O (第一次测试) :" "$(_yellow "$io1")"
+        printf "%-25s %s\n" "硬盘I/O (第二次测试) :" "$(_yellow "$io2")"
+        printf "%-25s %s\n" "硬盘I/O (第三次测试) :" "$(_yellow "$io3")"
+        echo -e "硬盘I/O (平均测试) : $(_yellow "$ioavg MB/s")"
+    else
+        echo -e " $(_red "Not enough space for I/O Speed test!")"
+    fi
+}
+
+# 调用函数进行测试
+print_io_test
