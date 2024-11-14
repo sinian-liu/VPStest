@@ -182,32 +182,29 @@ _yellow() {
     echo -e "\033[1;33m$1\033[0m"
 }
 
-# 查询本机的 IP 和 ASN 信息
-# 使用 `jq` 进行 JSON 解析，确保系统安装了 jq。若未安装，可以用以下命令安装:
-# sudo apt update && sudo apt install -y jq
+# 通过 API 获取 IP 信息，使用提供的 API 密钥
+API_TOKEN="5ebf2ff2b04160"
+ip_info=$(curl -s "ipinfo.io?token=${API_TOKEN}")
 
-# 调用 ipinfo.io API 获取 IP 信息
-ip_info=$(curl -s ipinfo.io)
+# 获取各项信息，检查是否存在字段
+ip_address=$(echo "$ip_info" | jq -r '.ip // "N/A"')
+city=$(echo "$ip_info" | jq -r '.city // "N/A"')
+region=$(echo "$ip_info" | jq -r '.region // "N/A"')
+country=$(echo "$ip_info" | jq -r '.country // "N/A"')
+loc=$(echo "$ip_info" | jq -r '.loc // "N/A"')
+org=$(echo "$ip_info" | jq -r '.org // "N/A"')
 
-# 解析 ASN 信息
-asn=$(echo "$ip_info" | jq -r '.asn.asn')
-asn_name=$(echo "$ip_info" | jq -r '.asn.name')
-asn_domain=$(echo "$ip_info" | jq -r '.asn.domain')
-asn_route=$(echo "$ip_info" | jq -r '.asn.route')
-asn_type=$(echo "$ip_info" | jq -r '.asn.type')
+# 获取 ASN 信息
+asn=$(echo "$ip_info" | jq -r '.asn.asn // "N/A"')
+asn_name=$(echo "$ip_info" | jq -r '.asn.name // "N/A"')
+asn_domain=$(echo "$ip_info" | jq -r '.asn.domain // "N/A"')
+asn_route=$(echo "$ip_info" | jq -r '.asn.route // "N/A"')
+asn_type=$(echo "$ip_info" | jq -r '.asn.type // "N/A"')
 
-# 解析公司信息
-company_name=$(echo "$ip_info" | jq -r '.company.name')
-company_domain=$(echo "$ip_info" | jq -r '.company.domain')
-company_type=$(echo "$ip_info" | jq -r '.company.type')
-
-# 解析地理信息
-ip_address=$(echo "$ip_info" | jq -r '.ip')
-city=$(echo "$ip_info" | jq -r '.city')
-region=$(echo "$ip_info" | jq -r '.region')
-country=$(echo "$ip_info" | jq -r '.country')
-loc=$(echo "$ip_info" | jq -r '.loc')
-org=$(echo "$ip_info" | jq -r '.org')
+# 获取公司信息
+company_name=$(echo "$ip_info" | jq -r '.company.name // "N/A"')
+company_domain=$(echo "$ip_info" | jq -r '.company.domain // "N/A"')
+company_type=$(echo "$ip_info" | jq -r '.company.type // "N/A"')
 
 # 输出查询结果
 echo "$(_yellow "IP info信息查询结果如下：")"
