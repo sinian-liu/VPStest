@@ -236,8 +236,10 @@ bash <(curl -Ls IP.Check.Place) <<< "y"
 
 #!/bin/bash
 
-# 执行第一个安装脚本
+# 执行第一个三网回程线路脚本
 curl https://raw.githubusercontent.com/zhanghanyun/backtrace/main/install.sh -sSf | sh
 
-# 执行第二个安装脚本
+# 执行第二个三网回程线路脚本
 curl https://raw.githubusercontent.com/zhucaidan/mtr_trace/main/mtr_trace.sh | bash
+# 安装并运行三网+教育网 IPv4 单线程测速脚本，并自动输入 '2'
+bash <(curl -sL https://raw.githubusercontent.com/i-abc/Speedtest/main/speedtest.sh) <<< "2"
