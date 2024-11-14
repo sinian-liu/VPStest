@@ -174,3 +174,59 @@ print_io_test() {
 
 # 调用函数进行测试
 print_io_test
+
+#!/bin/bash
+
+# 设置颜色
+_yellow() {
+    echo -e "\033[1;33m$1\033[0m"
+}
+
+# 查询本机的 IP 和 ASN 信息
+# 使用 `jq` 进行 JSON 解析，确保系统安装了 jq。若未安装，可以用以下命令安装:
+# sudo apt update && sudo apt install -y jq
+
+# 调用 ipinfo.io API 获取 IP 信息
+ip_info=$(curl -s ipinfo.io)
+
+# 解析 ASN 信息
+asn=$(echo "$ip_info" | jq -r '.asn.asn')
+asn_name=$(echo "$ip_info" | jq -r '.asn.name')
+asn_domain=$(echo "$ip_info" | jq -r '.asn.domain')
+asn_route=$(echo "$ip_info" | jq -r '.asn.route')
+asn_type=$(echo "$ip_info" | jq -r '.asn.type')
+
+# 解析公司信息
+company_name=$(echo "$ip_info" | jq -r '.company.name')
+company_domain=$(echo "$ip_info" | jq -r '.company.domain')
+company_type=$(echo "$ip_info" | jq -r '.company.type')
+
+# 解析地理信息
+ip_address=$(echo "$ip_info" | jq -r '.ip')
+city=$(echo "$ip_info" | jq -r '.city')
+region=$(echo "$ip_info" | jq -r '.region')
+country=$(echo "$ip_info" | jq -r '.country')
+loc=$(echo "$ip_info" | jq -r '.loc')
+org=$(echo "$ip_info" | jq -r '.org')
+
+# 输出查询结果
+echo "$(_yellow "IP info信息查询结果如下：")"
+echo "-------------------"
+echo "IP 地址:         $ip_address"
+echo "城市:            $city"
+echo "地区:            $region"
+echo "国家:            $country"
+echo "地理位置:        $loc"
+echo "组织:            $org"
+echo "-------------------"
+echo "ASN 信息："
+echo "ASN编号:         $asn"
+echo "ASN名称:         $asn_name"
+echo "ASN域名:         $asn_domain"
+echo "ASN路由:         $asn_route"
+echo "ASN类型:         $asn_type"
+echo "-------------------"
+echo "公司信息："
+echo "公司名称:        $company_name"
+echo "公司域名:        $company_domain"
+echo "公司类型:        $company_type"
