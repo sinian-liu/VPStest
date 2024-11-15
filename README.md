@@ -1,5 +1,5 @@
 ```
-bash <(curl -sL https://raw.githubusercontent.com/sinian-liu/test/main/system_info.sh)
+bash <(curl -sL https://raw.githubusercontent.com/sinian-liu/VPStest/main/system_info.sh)
 ```
 ### VPS一键测试脚本
 
