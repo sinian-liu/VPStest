@@ -317,14 +317,6 @@ curl https://raw.githubusercontent.com/zhucaidan/mtr_trace/main/mtr_trace.sh | b
 # 安装并运行三网+教育网 IPv4 单线程测速脚本，并自动输入 '2'
 bash <(curl -sL https://raw.githubusercontent.com/i-abc/Speedtest/main/speedtest.sh) <<< "2"
 
-# 检查 curl 是否已安装，若未安装则自动安装
-if ! command -v curl &>/dev/null; then
-    echo "curl 未安装，正在安装..."
-    apt update && apt install -y curl
-else
-    echo "curl 已安装，跳过安装。"
-fi
-
 # 执行流媒体平台及游戏区域限制测试脚本并自动输入 '66'
 bash <(curl -L -s check.unlock.media) <<< "66"
 # 全国五网ISP路由回程测试
