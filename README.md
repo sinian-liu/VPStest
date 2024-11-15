@@ -1,6 +1,9 @@
 ```
 bash <(curl -sL https://raw.githubusercontent.com/sinian-liu/test/main/system_info.sh)
 ```
+### VPS一键测试脚本
+
+
 ## 包含以下功能：
 - 1.更新系统,检查并安装jq、curl、dd、fio
 - 2.检查主机名和系统信息
