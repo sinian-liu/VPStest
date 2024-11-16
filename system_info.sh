@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 # 更新系统
 update_system() {
     echo "正在检查并更新系统..."
@@ -65,6 +66,30 @@ install_required_tools() {
         fi
     else
         echo "fio 已安装。"
+    fi
+
+    # 检查并安装 tar
+    if ! command -v tar &>/dev/null; then
+        echo "tar 未安装，正在安装..."
+        if [[ -f /etc/debian_version ]]; then
+            sudo apt install -y tar
+        elif [[ -f /etc/redhat-release ]]; then
+            sudo yum install -y tar
+        fi
+    else
+        echo "tar 已安装。"
+    fi
+
+    # 检查并安装 iperf3
+    if ! command -v iperf3 &>/dev/null; then
+        echo "iperf3 未安装，正在安装..."
+        if [[ -f /etc/debian_version ]]; then
+            sudo apt install -y iperf3
+        elif [[ -f /etc/redhat-release ]]; then
+            sudo yum install -y iperf3
+        fi
+    else
+        echo "iperf3 已安装。"
     fi
 }
 
