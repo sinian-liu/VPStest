@@ -68,6 +68,16 @@ install_required_tools() {
     fi
 }
 
+# 设置系统时区为中国上海
+set_timezone_to_shanghai() {
+    echo "正在将系统时区设置为中国上海..."
+    # 使用 timedatectl 设置时区
+    sudo timedatectl set-timezone Asia/Shanghai
+
+    # 验证时区设置
+    echo "当前系统时区为：$(timedatectl | grep 'Time zone')"
+}
+
 # 执行更新和工具安装
 update_system
 install_required_tools
