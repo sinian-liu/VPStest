@@ -1,5 +1,18 @@
 #!/bin/bash
 
+# 记录开始时间
+start_time=$(date +%s)
+
+# 增加sn为快捷启动命令，检查并创建 alias（如果没有的话）
+if ! grep -q "alias sn=" ~/.bashrc; then
+    echo "正在为 sn 设置快捷命令..."
+    echo "alias sn='/usr/local/bin/system_info.sh'" >> ~/.bashrc
+    source ~/.bashrc
+    echo "快捷命令 sn 已设置。"
+else
+    echo "快捷命令 sn 已经存在。"
+fi
+
 # 更新系统
 update_system() {
     echo "正在检查并更新系统..."
@@ -432,9 +445,12 @@ echo -e "\n\033[33m37VPS主机评测：\033[31mhttps://1373737.xyz\033[0m"
 echo -e "\033[33m服务器推荐：\033[31mhttps://my.frantech.ca/aff.php?aff=4337\033[0m"  
 echo -e "\033[33mYouTube频道：\033[31mhttps://www.youtube.com/@cyndiboy7881\033[0m"  
 
-# 设置快捷命令  
-echo "alias sn='/path/to/your/script.sh'" >> ~/.bashrc  # 修改为你的脚本路径  
-source ~/.bashrc  # 使alias立即生效  
+# 计算并显示总耗时
+end_time=$(date +%s)
+elapsed_time=$((end_time - start_time))
 
-# 退出脚本  
-exit 0  
+# 设置部分字体为橙色，部分为红色
+echo -e "\033[33m所有测试已经完成，测试总耗时：\033[31m$elapsed_time\033[33m 秒，感谢使用本脚本。\033[0m"
+
+# 继续执行脚本的其他内容...
+echo "执行脚本中的其他操作"
