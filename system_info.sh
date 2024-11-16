@@ -460,8 +460,16 @@ echo -e "\033[33mYouTube频道：\033[31mhttps://www.youtube.com/@cyndiboy7881\0
 end_time=$(date +%s)
 elapsed_time=$((end_time - start_time))
 
-# 设置部分字体为橙色，部分为红色
-echo -e "\033[33m所有测试已经完成，测试总耗时：\033[31m$elapsed_time\033[33m 秒，感谢使用本脚本。\033[0m"
+# 换算成分钟和秒
+minutes=$((elapsed_time / 60))
+seconds=$((elapsed_time % 60))
+
+# 显示分钟和秒
+if [ $minutes -gt 0 ]; then
+    echo -e "\033[33m所有测试已经完成，测试总耗时：\033[31m${minutes} 分钟 ${seconds} 秒\033[33m，感谢使用本脚本。\033[0m"
+else
+    echo -e "\033[33m所有测试已经完成，测试总耗时：\033[31m${seconds} 秒\033[33m，感谢使用本脚本。\033[0m"
+fi
 
 # 继续执行脚本的其他内容...
 echo "执行脚本中的其他操作"
