@@ -102,19 +102,32 @@ set_timezone_to_shanghai() {
     echo "当前系统时区为：$(timedatectl | grep 'Time zone')"
 }
 
+# 检测是否为Debian或Ubuntu系统
+is_debian_or_ubuntu() {
+    if [[ -f /etc/debian_version ]]; then
+        echo "检测到Debian或Ubuntu系统，继续开启BBR..."
+        return 0
+    else
+        echo "此系统不是Debian或Ubuntu，跳过BBR设置。"
+        return 1
+    fi
+}
+
 # 一键开启BBR（适用于较新的Debian、Ubuntu）
 enable_bbr() {
-    echo "正在开启BBR..."
-    # 设置默认的队列调度器为 fq
-    echo "net.core.default_qdisc=fq" | sudo tee -a /etc/sysctl.conf
-    # 设置TCP拥塞控制算法为 bbr
-    echo "net.ipv4.tcp_congestion_control=bbr" | sudo tee -a /etc/sysctl.conf
-    # 应用配置
-    sudo sysctl -p
+    if is_debian_or_ubuntu; then
+        echo "正在开启BBR..."
+        # 设置默认的队列调度器为 fq
+        echo "net.core.default_qdisc=fq" | sudo tee -a /etc/sysctl.conf
+        # 设置TCP拥塞控制算法为 bbr
+        echo "net.ipv4.tcp_congestion_control=bbr" | sudo tee -a /etc/sysctl.conf
+        # 应用配置
+        sudo sysctl -p
 
-    # 检查BBR是否已启用
-    sysctl net.ipv4.tcp_available_congestion_control
-    lsmod | grep bbr
+        # 检查BBR是否已启用
+        sysctl net.ipv4.tcp_available_congestion_control
+        lsmod | grep bbr
+    fi
 }
 
 # 执行更新和工具安装
