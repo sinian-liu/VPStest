@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# 每 120 秒发送一个心跳信号（2 分钟）
+while true; do
+    echo -e "\033[33m保活中...\033[0m"
+    sleep 120
+done &
 # 记录开始时间
 start_time=$(date +%s)
 
