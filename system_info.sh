@@ -83,7 +83,8 @@ install_required_tools() {
     if ! command -v iperf3 &>/dev/null; then
         echo "iperf3 未安装，正在安装..."
         if [[ -f /etc/debian_version ]]; then
-            sudo apt install -y iperf3
+            # 设置非交互模式，避免询问是否让 iperf3 启动为守护进程
+            sudo DEBIAN_FRONTEND=noninteractive apt install -y iperf3
         elif [[ -f /etc/redhat-release ]]; then
             sudo yum install -y iperf3
         fi
