@@ -104,6 +104,18 @@ install_required_tools() {
     else
         echo "iperf3 已安装。"
     fi
+    
+    # 检查并安装 mtr
+    if ! command -v mtr &>/dev/null; then
+        echo "mtr 未安装，正在安装..."
+        if [[ -f /etc/debian_version ]]; then
+            sudo apt install -y mtr
+        elif [[ -f /etc/redhat-release ]]; then
+            sudo yum install -y mtr
+        fi
+    else
+        echo "mtr 已安装。"
+    fi
 }
 
 # 设置系统时区为中国上海
