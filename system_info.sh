@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # 更新系统
 update_system() {
     echo "正在检查并更新系统..."
@@ -103,6 +102,21 @@ set_timezone_to_shanghai() {
     echo "当前系统时区为：$(timedatectl | grep 'Time zone')"
 }
 
+# 一键开启BBR（适用于较新的Debian、Ubuntu）
+enable_bbr() {
+    echo "正在开启BBR..."
+    # 设置默认的队列调度器为 fq
+    echo "net.core.default_qdisc=fq" | sudo tee -a /etc/sysctl.conf
+    # 设置TCP拥塞控制算法为 bbr
+    echo "net.ipv4.tcp_congestion_control=bbr" | sudo tee -a /etc/sysctl.conf
+    # 应用配置
+    sudo sysctl -p
+
+    # 检查BBR是否已启用
+    sysctl net.ipv4.tcp_available_congestion_control
+    lsmod | grep bbr
+}
+
 # 执行更新和工具安装
 update_system
 install_required_tools
@@ -110,7 +124,11 @@ install_required_tools
 # 设置系统时区
 set_timezone_to_shanghai
 
+# 启用BBR
+enable_bbr
+
 # 继续执行您的其他脚本逻辑...
+
 
 #!/bin/bash
 
