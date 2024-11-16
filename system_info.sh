@@ -11,7 +11,7 @@ start_time=$(date +%s)
 # 增加sn为快捷启动命令，检查并创建 alias（如果没有的话）
 if ! grep -q "alias sn=" ~/.bashrc; then
     echo "正在为 sn 设置快捷命令..."
-    echo "alias sn='/usr/local/bin/system_info.sh'" >> ~/.bashrc
+    echo "alias sn='bash <(curl -sL https://raw.githubusercontent.com/sinian-liu/VPStest/main/system_info.sh)'" >> ~/.bashrc
     source ~/.bashrc
     echo "快捷命令 sn 已设置。"
 else
