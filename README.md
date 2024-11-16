@@ -5,7 +5,7 @@ bash <(curl -sL https://raw.githubusercontent.com/sinian-liu/VPStest/main/system
 
 
 ## 包含以下功能：
-- 1.更新系统,检查并安装jq、curl、dd、fio
+- 1.更新系统,检查并安装jq、curl、dd、fio，系统地区时间修改为中国上海
 - 2.检查主机名和系统信息
 - 3.硬盘I/O性能进行三次测试
 - 4.IPinfo检测IP类型
