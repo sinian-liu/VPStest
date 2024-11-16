@@ -82,6 +82,9 @@ set_timezone_to_shanghai() {
 update_system
 install_required_tools
 
+# 设置系统时区
+set_timezone_to_shanghai
+
 # 继续执行您的其他脚本逻辑...
 
 #!/bin/bash
