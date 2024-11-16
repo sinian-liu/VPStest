@@ -440,7 +440,6 @@ curl -s https://nxtrace.org/nt | bash && sleep 2 && echo -e "1\n6" | nexttrace -
 # 执行 Bench 性能测试并自动回车运行
 curl -Lso- bench.sh | bash
 # 显示测试完成提示信息  
-echo -e "\033[33m所有测试已经完成，感谢使用本脚本。\033[0m"  
 echo -e "\n\033[33m37VPS主机评测：\033[31mhttps://1373737.xyz\033[0m"  
 echo -e "\033[33m服务器推荐：\033[31mhttps://my.frantech.ca/aff.php?aff=4337\033[0m"  
 echo -e "\033[33mYouTube频道：\033[31mhttps://www.youtube.com/@cyndiboy7881\033[0m"  
