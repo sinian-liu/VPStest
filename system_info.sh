@@ -130,6 +130,36 @@ enable_bbr() {
     fi
 }
 
+# 配置 iperf3 为自动启动服务
+enable_iperf3_autostart() {
+    echo "正在配置 iperf3 为自动启动守护进程..."
+
+    # 创建 systemd 服务文件
+    sudo bash -c 'cat > /etc/systemd/system/iperf3.service <<EOF
+[Unit]
+Description=iperf3 Daemon
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/iperf3 -s
+Restart=on-failure
+User=nobody
+Group=nogroup
+
+[Install]
+WantedBy=multi-user.target
+EOF'
+
+    # 重新加载 systemd 配置
+    sudo systemctl daemon-reload
+
+    # 启动并设置 iperf3 服务为开机自启
+    sudo systemctl start iperf3
+    sudo systemctl enable iperf3
+
+    echo "iperf3 服务已配置为自动启动。"
+}
+
 # 执行更新和工具安装
 update_system
 install_required_tools
@@ -139,6 +169,9 @@ set_timezone_to_shanghai
 
 # 启用BBR
 enable_bbr
+
+# 配置 iperf3 自动启动
+enable_iperf3_autostart
 
 # 继续执行您的其他脚本逻辑...
 
