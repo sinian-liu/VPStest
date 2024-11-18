@@ -208,7 +208,6 @@ enable_iperf3_autostart
 # 继续执行您的其他脚本逻辑...
 
 
-#!/bin/bash
 
 # 颜色定义
 YELLOW='\033[1;33m'
@@ -315,7 +314,6 @@ echo "系统时间:     $timezone $sys_time"
 echo "-------------"
 echo "运行时长:     $uptime_formatted"
 
-#!/bin/bash
 
 # 颜色定义
 YELLOW='\033[1;33m'
@@ -469,7 +467,118 @@ echo "公司名称:        $company_name"
 echo "公司域名:        $company_domain"
 echo "公司类型:        $company_type"
 
-#!/bin/bash
+# IP欺诈风险监测脚本
+
+# Scamalytics API key
+API_KEY="89c1e8dc1272cb7b1e1f162cbdcc0cf4434a06c41b4ab7f8b7f9497c0cd56e9f"
+
+# 检测依赖是否已安装并自动安装
+check_dependencies() {
+    echo "检测所需依赖工具：curl 和 jq..."
+
+    # 获取系统类型
+    if [ -f /etc/os-release ]; then
+        . /etc/os-release
+        OS=$ID
+    else
+        echo "无法检测系统类型，请手动安装 curl 和 jq 后重试。"
+        exit 1
+    fi
+
+    # 检测 curl
+    if ! command -v curl &> /dev/null; then
+        echo "未检测到 curl，正在安装..."
+        if [[ "$OS" == "ubuntu" || "$OS" == "debian" ]]; then
+            sudo apt update && sudo apt install -y curl
+        elif [[ "$OS" == "centos" || "$OS" == "rocky" || "$OS" == "almalinux" ]]; then
+            sudo yum install -y curl
+        else
+            echo "不支持的系统类型：$OS，请手动安装 curl 后重试。"
+            exit 1
+        fi
+    else
+        echo "curl 已安装，跳过。"
+    fi
+
+    # 检测 jq
+    if ! command -v jq &> /dev/null; then
+        echo "未检测到 jq，正在安装..."
+        if [[ "$OS" == "ubuntu" || "$OS" == "debian" ]]; then
+            sudo apt update && sudo apt install -y jq
+        elif [[ "$OS" == "centos" || "$OS" == "rocky" || "$OS" == "almalinux" ]]; then
+            sudo yum install -y jq
+        else
+            echo "不支持的系统类型：$OS，请手动安装 jq 后重试。"
+            exit 1
+        fi
+    else
+        echo "jq 已安装，跳过。"
+    fi
+}
+
+# 获取当前时间
+get_current_time() {
+    echo $(date +"%Y-%m-%d %H:%M:%S")
+}
+
+# 获取本地VPS的IPv4地址
+get_ip_address() {
+    IPV4=$(ip -4 addr show | grep inet | awk '{print $2}' | cut -d'/' -f1 | head -n 1)
+    if [ ! -z "$IPV4" ]; then
+        echo $IPV4
+    else
+        echo "没有找到可用的IPv4地址"
+    fi
+}
+
+# 使用Scamalytics API检测IP欺诈得分
+get_fraud_score() {
+    IP=$1
+    RESPONSE=$(curl -s "https://api.scamalytics.com/v1/score/$IP?api_key=$API_KEY")
+    SCORE=$(echo $RESPONSE | jq -r '.score')
+    echo $SCORE
+}
+
+# 显示得分及风险等级
+display_fraud_score() {
+    IP=$1
+    SCORE=$2
+    CURRENT_TIME=$(get_current_time)
+
+    echo -e "\n检测时间: $CURRENT_TIME"
+    echo -e "此 IP ($IP) 的欺诈得分为 $SCORE，风险等级：\c"
+
+    if [[ $SCORE -le 30 ]]; then
+        echo -e "\033[32m低风险\033[0m。"
+    elif [[ $SCORE -le 50 ]]; then
+        echo -e "\033[33m中等风险\033[0m。"
+    else
+        echo -e "\033[31m高风险！\033[0m"
+    fi
+}
+
+# 主程序
+main() {
+    # 检查依赖
+    check_dependencies
+
+    # 获取当前VPS的IPv4地址
+    IP=$(get_ip_address)
+    if [ "$IP" == "没有找到可用的IPv4地址" ]; then
+        echo "无法获取有效的IPv4地址，脚本终止。"
+        exit 1
+    fi
+    echo -e "正在检测当前VPS的IPv4: $IP"
+
+    # 获取IP欺诈得分
+    FRAUD_SCORE=$(get_fraud_score $IP)
+
+    # 显示得分和风险等级
+    display_fraud_score $IP $FRAUD_SCORE
+}
+
+# 执行主程序
+main
 
 # IP质量检测
 # 获取并自动输入 'y' 安装脚本
