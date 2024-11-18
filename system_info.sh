@@ -332,6 +332,11 @@ _red() {
     echo -e "${RED}$1${NC}"
 }
 
+# 定义颜色
+YELLOW='\033[1;33m'
+GREEN='\033[0;32m'
+NC='\033[0m'  # 无颜色
+
 # 模拟硬盘 I/O 性能测试函数 (需要根据你的系统实际情况替换为真实的 I/O 测试命令)
 io_test() {
     # 模拟硬盘测试命令 (这里使用 dd 作为示例)
@@ -377,6 +382,34 @@ print_io_test() {
         printf "%-25s %s\n" "硬盘I/O (第二次测试) :" "$(_yellow "$io2")"
         printf "%-25s %s\n" "硬盘I/O (第三次测试) :" "$(_yellow "$io3")"
         echo -e "硬盘I/O (平均测试) : $(_yellow "$ioavg MB/s")"
+        
+        # 显示硬盘类型和性能等级
+        disk_type=$(lsblk -d -o name,rota | grep -E "^[a-z]" | awk '{print $2}')
+        if [ "$disk_type" -eq 0 ]; then
+            disk_type="SSD"
+        elif [ "$disk_type" -eq 1 ]; then
+            disk_type="HDD"
+        else
+            disk_type="未知"
+        fi
+        
+        # 这里是硬盘性能等级的判定，您可以根据需要调整标准
+        if (( $(echo "$ioavg > 500" | bc -l) )); then
+            performance_level="优秀"
+        elif (( $(echo "$ioavg > 200" | bc -l) )); then
+            performance_level="好"
+        elif (( $(echo "$ioavg > 100" | bc -l) )); then
+            performance_level="一般"
+        else
+            performance_level="差"
+        fi
+
+        echo "硬盘类型: $disk_type"
+        echo "硬盘性能等级: $performance_level"
+
+        # 输出绿色的提示信息
+        echo -e "${GREEN}测试数据不是百分百准确，以官方宣称为主。${NC}"
+
     else
         echo -e " $(_red "Not enough space for I/O Speed test!")"
     fi
