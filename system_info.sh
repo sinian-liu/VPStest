@@ -2,9 +2,10 @@
 
 # 每 120 秒发送一个心跳信号（2 分钟）
 while true; do
-    echo -e "\033[33m保活中...\033[0m"
+    # 删除或注释掉 echo 语句，避免显示 "保活中..."
     sleep 120
 done &
+
 # 记录开始时间
 start_time=$(date +%s)
 
