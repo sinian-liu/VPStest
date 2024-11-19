@@ -415,7 +415,7 @@ print_io_test() {
 print_io_test
 
 
-# IP info信息查询
+#!/bin/bash
 
 # 设置颜色
 _yellow() {
@@ -466,8 +466,10 @@ echo "公司名称:        $company_name"
 echo "公司域名:        $company_domain"
 echo "公司类型:        $company_type"
 
-# IP欺诈风险监测脚本
+echo ""
+echo ""
 
+# IP欺诈风险监测脚本
 
 # Scamalytics API key
 API_KEY="89c1e8dc1272cb7b1e1f162cbdcc0cf4434a06c41b4ab7f8b7f9497c0cd56e9f"
@@ -591,6 +593,7 @@ main
 # IP质量检测
 # 获取并自动输入 'y' 安装脚本
 bash <(curl -Ls IP.Check.Place) <<< "y"
+
 
 # 执行第一个三网回程线路脚本
 curl https://raw.githubusercontent.com/zhanghanyun/backtrace/main/install.sh -sSf | sh
