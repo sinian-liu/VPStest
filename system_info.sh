@@ -610,10 +610,15 @@ bash <(curl -L -s check.unlock.media) <<< "66"
 curl -s https://nxtrace.org/nt | bash && sleep 2 && echo -e "1\n6" | nexttrace --fast-trace
 # 执行 Bench 性能测试并自动回车运行
 curl -Lso- bench.sh | bash
+
+echo ""
+echo ""
+
 # 显示测试完成提示信息  
 echo -e "\n\033[33m37VPS主机评测：\033[31mhttps://1373737.xyz\033[0m"  
 echo -e "\033[33m服务器推荐：\033[31mhttps://my.frantech.ca/aff.php?aff=4337\033[0m"  
 echo -e "\033[33mYouTube频道：\033[31mhttps://www.youtube.com/@cyndiboy7881\033[0m"  
+echo -e "\033[33mv2ray-agent脚本：\033[31mhttps://github.com/sinian-liu/v2ray-agent\033[0m"  
 
 # 计算并显示总耗时
 end_time=$(date +%s)
@@ -628,9 +633,7 @@ if [ $minutes -gt 0 ]; then
     echo -e "\033[33m所有测试已经完成，测试总耗时：\033[31m${minutes} 分钟 ${seconds} 秒\033[33m，感谢使用本脚本。\033[0m"
 else
     echo -e "\033[33m所有测试已经完成，测试总耗时：\033[31m${seconds} 秒\033[33m，感谢使用本脚本。\033[0m"
-    echo -e "\033[33m下次直接输入快捷命令即可再次启动：\033[31msn\033[0m"  
-
 fi
 
-# 继续执行脚本的其他内容...
-echo "执行脚本中的其他操作"
+# 新增行：下次直接输入快捷命令即可再次启动
+echo -e "\033[33m下次直接输入快捷命令即可再次启动：\033[31msn\033[0m"
