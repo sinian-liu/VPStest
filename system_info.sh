@@ -588,11 +588,6 @@ main() {
 }
 
 # 执行主程序
-main
-    echo -e "\n"
-    echo -e "\n"
-    echo -e "\n"
-
 
 # IP质量检测
 # 获取并自动输入 'y' 安装脚本
