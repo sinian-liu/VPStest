@@ -590,6 +590,11 @@ main() {
 # 执行主程序
 main
 
+
+echo ""
+echo ""
+
+
 # IP质量检测
 # 获取并自动输入 'y' 安装脚本
 bash <(curl -Ls IP.Check.Place) <<< "y"
