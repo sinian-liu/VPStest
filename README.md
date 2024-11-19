@@ -16,3 +16,4 @@ bash <(curl -sL https://raw.githubusercontent.com/sinian-liu/VPStest/main/system
 - 9.流媒体平台及游戏区域限制测试
 - 10.全国五网ISP路由回程测试
 - 11.Bench 性能测试
+- 12.快捷命令，输入sn随时再次运行
