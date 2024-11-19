@@ -469,6 +469,7 @@ echo "公司类型:        $company_type"
 
 # IP欺诈风险监测脚本
 
+
 # Scamalytics API key
 API_KEY="89c1e8dc1272cb7b1e1f162cbdcc0cf4434a06c41b4ab7f8b7f9497c0cd56e9f"
 
@@ -485,7 +486,7 @@ check_dependencies() {
         exit 1
     fi
 
-    # 检测 curl
+    # 安装 curl
     if ! command -v curl &> /dev/null; then
         echo "未检测到 curl，正在安装..."
         if [[ "$OS" == "ubuntu" || "$OS" == "debian" ]]; then
@@ -500,7 +501,7 @@ check_dependencies() {
         echo "curl 已安装，跳过。"
     fi
 
-    # 检测 jq
+    # 安装 jq
     if ! command -v jq &> /dev/null; then
         echo "未检测到 jq，正在安装..."
         if [[ "$OS" == "ubuntu" || "$OS" == "debian" ]]; then
@@ -518,42 +519,52 @@ check_dependencies() {
 
 # 获取当前时间
 get_current_time() {
-    echo $(date +"%Y-%m-%d %H:%M:%S")
+    date +"%Y-%m-%d %H:%M:%S"
 }
 
-# 获取本地VPS的公网IPv4地址
-get_ip_address() {
+# 获取公网 IPv4 地址
+get_public_ip() {
     IPV4=$(curl -s https://api.ipify.org)
     if [[ -n "$IPV4" ]]; then
         echo $IPV4
     else
         echo "无法获取公网IPv4地址"
+        exit 1
     fi
 }
 
-# 使用Scamalytics API检测IP欺诈得分
-get_fraud_score() {
+# 使用 Scamalytics API 检测 IP 欺诈得分
+get_fraud_details() {
     IP=$1
     RESPONSE=$(curl -s "https://api.scamalytics.com/v1/score/$IP?api_key=$API_KEY")
-    SCORE=$(echo $RESPONSE | jq -r '.score')
-    echo $SCORE
+    SCORE=$(echo $RESPONSE | jq -r '.score // "null"')
+    RISK=$(echo $RESPONSE | jq -r '.risk // "unknown"')
+    if [[ "$SCORE" == "null" || -z "$SCORE" ]]; then
+        echo "API响应不包含有效得分，无法继续检测。"
+        exit 1
+    fi
+    echo "$SCORE $RISK"
 }
 
-# 显示得分及风险等级
+# 显示得分及风险等级评估
 display_fraud_score() {
     IP=$1
     SCORE=$2
+    RISK=$3
     CURRENT_TIME=$(get_current_time)
 
     echo -e "\n检测时间: $CURRENT_TIME"
-    echo -e "此 IP ($IP) 的欺诈得分为 $SCORE，风险等级：\c"
+    echo -e "此 IP ($IP) 的欺诈得分为 $SCORE，风险等级评估：\c"
 
-    if [[ $SCORE -le 30 ]]; then
+    # 风险级别分析
+    if [[ "$RISK" == "low" ]]; then
         echo -e "\033[32m低风险\033[0m。"
-    elif [[ $SCORE -le 50 ]]; then
+    elif [[ "$RISK" == "medium" ]]; then
         echo -e "\033[33m中等风险\033[0m。"
-    else
+    elif [[ "$RISK" == "high" ]]; then
         echo -e "\033[31m高风险！\033[0m"
+    else
+        echo -e "\033[34m未知风险\033[0m。"
     fi
 }
 
@@ -562,19 +573,17 @@ main() {
     # 检查依赖
     check_dependencies
 
-    # 获取当前VPS的IPv4地址
-    IP=$(get_ip_address)
-    if [ "$IP" == "无法获取公网IPv4地址" ]; then
-        echo "无法获取有效的IPv4地址，脚本终止。"
-        exit 1
-    fi
-    echo -e "正在检测当前VPS的IPv4: $IP"
+    # 获取公网 IP
+    IP=$(get_public_ip)
+    echo -e "正在检测当前VPS的公网 IPv4: $IP"
 
-    # 获取IP欺诈得分
-    FRAUD_SCORE=$(get_fraud_score $IP)
+    # 获取 IP 欺诈详细信息
+    DETAILS=$(get_fraud_details $IP)
+    FRAUD_SCORE=$(echo $DETAILS | awk '{print $1}')
+    RISK_LEVEL=$(echo $DETAILS | awk '{print $2}')
 
-    # 显示得分和风险等级
-    display_fraud_score $IP $FRAUD_SCORE
+    # 显示得分和风险等级评估
+    display_fraud_score $IP $FRAUD_SCORE $RISK_LEVEL
 }
 
 # 执行主程序
