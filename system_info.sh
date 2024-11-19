@@ -343,7 +343,6 @@ io_test() {
     echo "$result"
 }
 
-# 打印硬盘性能测试结果
 print_io_test() {
     freespace=$(df -m . | awk 'NR==2 {print $4}')
     if [ -z "${freespace}" ]; then
@@ -361,14 +360,14 @@ print_io_test() {
         io3=$(io_test ${writemb})
         
         # 提取测试结果并转换单位为 MB/s
-        ioraw1=$(echo "$io1" | awk 'NR==1 {print $1}')
-        [[ "$(echo "$io1" | awk 'NR==1 {print $2}')" == "GB/s" ]] && ioraw1=$(awk 'BEGIN{print '"$ioraw1"' * 1024}')
+        ioraw1=$(echo "$io1" | awk '{print $1}')
+        [[ "$(echo "$io1" | awk '{print $2}')" == "GB/s" ]] && ioraw1=$(awk 'BEGIN{print '"$ioraw1"' * 1024}')
         
-        ioraw2=$(echo "$io2" | awk 'NR==1 {print $1}')
-        [[ "$(echo "$io2" | awk 'NR==1 {print $2}')" == "GB/s" ]] && ioraw2=$(awk 'BEGIN{print '"$ioraw2"' * 1024}')
+        ioraw2=$(echo "$io2" | awk '{print $1}')
+        [[ "$(echo "$io2" | awk '{print $2}')" == "GB/s" ]] && ioraw2=$(awk 'BEGIN{print '"$ioraw2"' * 1024}')
         
-        ioraw3=$(echo "$io3" | awk 'NR==1 {print $1}')
-        [[ "$(echo "$io3" | awk 'NR==1 {print $2}')" == "GB/s" ]] && ioraw3=$(awk 'BEGIN{print '"$ioraw3"' * 1024}')
+        ioraw3=$(echo "$io3" | awk '{print $1}')
+        [[ "$(echo "$io3" | awk '{print $2}')" == "GB/s" ]] && ioraw3=$(awk 'BEGIN{print '"$ioraw3"' * 1024}')
 
         # 计算总和和平均值
         ioall=$(awk 'BEGIN{print '"$ioraw1"' + '"$ioraw2"' + '"$ioraw3"'}')
@@ -381,17 +380,17 @@ print_io_test() {
         printf "%-25s %s\n" "硬盘I/O (第三次测试) :" "$(_yellow "$io3")"
         echo -e "硬盘I/O (平均测试) : $(_yellow "$ioavg MB/s")"
         
-        # 显示硬盘类型和性能等级
-        disk_type=$(lsblk -d -o name,rota | grep -E "^[a-z]" | awk '{print $2}')
-        if [ "$disk_type" -eq 0 ]; then
+        # 硬盘类型检测
+        disk_type=$(lsblk -d -o rota | awk 'NR==2')
+        if [[ "$disk_type" == "0" ]]; then
             disk_type="SSD"
-        elif [ "$disk_type" -eq 1 ]; then
+        elif [[ "$disk_type" == "1" ]]; then
             disk_type="HDD"
         else
             disk_type="未知"
         fi
         
-        # 这里是硬盘性能等级的判定，您可以根据需要调整标准
+        # 硬盘性能等级判定
         if (( $(echo "$ioavg > 500" | bc -l) )); then
             performance_level="优秀"
         elif (( $(echo "$ioavg > 200" | bc -l) )); then
@@ -409,14 +408,14 @@ print_io_test() {
         echo -e "${GREEN}测试数据不是百分百准确，以官方宣称为主。${NC}"
 
     else
-        echo -e " $(_red "Not enough space for I/O Speed test!")"
+        echo -e " $(_red "空间不足，无法测试硬盘性能！")"
     fi
 }
 
-# 调用函数进行测试
 print_io_test
 
-#!/bin/bash
+
+# IP info信息查询
 
 # 设置颜色
 _yellow() {
