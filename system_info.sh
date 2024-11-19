@@ -521,13 +521,13 @@ get_current_time() {
     echo $(date +"%Y-%m-%d %H:%M:%S")
 }
 
-# 获取本地VPS的IPv4地址
+# 获取本地VPS的公网IPv4地址
 get_ip_address() {
-    IPV4=$(ip -4 addr show | grep inet | awk '{print $2}' | cut -d'/' -f1 | head -n 1)
-    if [ ! -z "$IPV4" ]; then
+    IPV4=$(curl -s https://api.ipify.org)
+    if [[ -n "$IPV4" ]]; then
         echo $IPV4
     else
-        echo "没有找到可用的IPv4地址"
+        echo "无法获取公网IPv4地址"
     fi
 }
 
@@ -564,7 +564,7 @@ main() {
 
     # 获取当前VPS的IPv4地址
     IP=$(get_ip_address)
-    if [ "$IP" == "没有找到可用的IPv4地址" ]; then
+    if [ "$IP" == "无法获取公网IPv4地址" ]; then
         echo "无法获取有效的IPv4地址，脚本终止。"
         exit 1
     fi
