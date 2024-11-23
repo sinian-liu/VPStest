@@ -424,7 +424,10 @@ _yellow() {
 
 # IPinfo信息查询
 # 通过 API 获取 IP 信息，使用提供的 API 密钥
+# API Token
 API_TOKEN="5ebf2ff2b04160"
+
+# 获取 IP 信息
 ip_info=$(curl -s "ipinfo.io?token=${API_TOKEN}")
 
 # 获取各项信息，检查是否存在字段
@@ -435,20 +438,16 @@ country=$(echo "$ip_info" | jq -r '.country // "N/A"')
 loc=$(echo "$ip_info" | jq -r '.loc // "N/A"')
 org=$(echo "$ip_info" | jq -r '.org // "N/A"')
 
-# 获取 ASN 信息
-asn=$(echo "$ip_info" | jq -r '.asn.asn // "N/A"')
-asn_name=$(echo "$ip_info" | jq -r '.asn.name // "N/A"')
-asn_domain=$(echo "$ip_info" | jq -r '.asn.domain // "N/A"')
-asn_route=$(echo "$ip_info" | jq -r '.asn.route // "N/A"')
-asn_type=$(echo "$ip_info" | jq -r '.asn.type // "N/A"')
+# 获取 ASN 信息（免费版通过 org 字段提供 ASN 信息）
+asn=$(echo "$ip_info" | jq -r '.org // "N/A"')
 
-# 获取公司信息
-company_name=$(echo "$ip_info" | jq -r '.company.name // "N/A"')
-company_domain=$(echo "$ip_info" | jq -r '.company.domain // "N/A"')
-company_type=$(echo "$ip_info" | jq -r '.company.type // "N/A"')
+# 公司信息（免费版不支持）
+company_name="N/A"
+company_domain="N/A"
+company_type="N/A"
 
 # 输出查询结果
-echo -e "\n\n\n$(_yellow "IP info信息查询结果如下：")"
+echo -e "\n\n\nIP info信息查询结果如下："
 echo "-------------------"
 echo "IP 地址:         $ip_address"
 echo "城市:            $city"
@@ -458,14 +457,13 @@ echo "地理位置:        $loc"
 echo "组织:            $org"
 echo "-------------------"
 echo "ASN编号:         $asn"
-echo "ASN名称:         $asn_name"
-echo "ASN域名:         $asn_domain"
-echo "ASN路由:         $asn_route"
-echo "ASN类型:         $asn_type"
 echo "-------------------"
 echo "公司名称:        $company_name"
 echo "公司域名:        $company_domain"
 echo "公司类型:        $company_type"
+echo -e "\n\n备注："
+echo "1. ASN 编号、名称、路由和类型字段仅在付费版本中可用。"
+echo "2. 公司信息（名称、域名、类型）仅在付费版本中可用。"
 
 echo ""
 echo ""
