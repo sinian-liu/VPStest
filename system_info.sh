@@ -422,6 +422,7 @@ _yellow() {
     echo -e "\033[1;33m$1\033[0m"
 }
 
+# IPinfo信息查询
 # 通过 API 获取 IP 信息，使用提供的 API 密钥
 API_TOKEN="5ebf2ff2b04160"
 ip_info=$(curl -s "ipinfo.io?token=${API_TOKEN}")
