@@ -19,6 +19,19 @@ else
     echo "快捷命令 sn 已经存在。"
 fi
 
+# 设置新的主机名
+NEW_HOSTNAME="www.1373737.xyz"
+
+# 修改主机名
+sudo hostnamectl set-hostname "$NEW_HOSTNAME"
+
+# 更新 /etc/hosts 文件
+sudo sed -i "s/127.0.1.1.*/127.0.1.1   $NEW_HOSTNAME/" /etc/hosts
+
+# 验证修改
+echo "主机名已成功修改为："
+hostnamectl
+
 # 更新系统
 update_system() {
     echo "正在检查并更新系统..."
