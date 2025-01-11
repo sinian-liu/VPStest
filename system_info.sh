@@ -348,12 +348,29 @@ YELLOW='\033[1;33m'
 GREEN='\033[0;32m'
 NC='\033[0m'  # 无颜色
 
+
 # 模拟硬盘 I/O 性能测试函数 (需要根据你的系统实际情况替换为真实的 I/O 测试命令)
 io_test() {
     # 模拟硬盘测试命令 (这里使用 dd 作为示例)
     result=$(dd if=/dev/zero of=tempfile bs=1M count=$1 oflag=direct 2>&1 | grep -oP '[0-9.]+ (MB|GB)/s')
     rm -f tempfile  # 删除临时文件
     echo "$result"
+}
+
+# 获取硬盘类型的函数
+get_disk_type() {
+    # 检查是否是 NVMe SSD
+    if ls /dev/nvme* &>/dev/null; then
+        echo "NVMe SSD"
+    # 检查是否是 SSD 还是 HDD
+    else
+        disk_type=$(lsblk -d -o name,rota | grep -E '^[a-zA-Z0-9]' | awk '{print $2}')
+        if [ "$disk_type" -eq 0 ]; then
+            echo "SSD"
+        else
+            echo "HDD"
+        fi
+    fi
 }
 
 print_io_test() {
@@ -393,15 +410,8 @@ print_io_test() {
         printf "%-25s %s\n" "硬盘I/O (第三次测试) :" "$(_yellow "$io3")"
         echo -e "硬盘I/O (平均测试) : $(_yellow "$ioavg MB/s")"
         
-        # 硬盘类型检测
-        disk_type=$(lsblk -d -o rota | awk 'NR==2')
-        if [[ "$disk_type" == "0" ]]; then
-            disk_type="SSD"
-        elif [[ "$disk_type" == "1" ]]; then
-            disk_type="HDD"
-        else
-            disk_type="未知"
-        fi
+        # 获取硬盘类型
+        disk_type=$(get_disk_type)
         
         # 硬盘性能等级判定
         if (( $(echo "$ioavg > 500" | bc -l) )); then
