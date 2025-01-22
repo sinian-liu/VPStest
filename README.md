@@ -15,5 +15,5 @@
 - 12.快捷命令，输入sn随时再次运行
 
 ```
-bash <(curl -sL https://raw.githubusercontent.com/sinian-liu/VPStest/main/system
+bash <(curl -sL https://raw.githubusercontent.com/sinian-liu/VPStest/main/system_info.sh)
 ```
