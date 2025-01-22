@@ -19,5 +19,5 @@ bash <(curl -sL https://raw.githubusercontent.com/sinian-liu/VPStest/main/system
 10. 服务器时区修改为中国时区
 11. 保持SSH会话一直连接不断开
 12. 安装 Windows或Linux系统
-=============================================
 
+快捷命令：s
