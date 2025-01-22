@@ -5,6 +5,12 @@ bash <(curl -sL https://raw.githubusercontent.com/sinian-liu/VPStest/main/system
 
 
 ## 包含以下功能：
+=============================================
+服务器推荐：https://my.frantech.ca/aff.php?aff=4337
+VPS评测官方网站：https://www.1373737.xyz/
+YouTube频道：https://www.youtube.com/@cyndiboy7881
+=============================================
+请选择要执行的操作：
 1. VPS一键测试
 2. BBR安装
 3. 安装v2ray
@@ -17,3 +23,5 @@ bash <(curl -sL https://raw.githubusercontent.com/sinian-liu/VPStest/main/system
 10. 服务器时区修改为中国时区
 11. 保持SSH会话一直连接不断开
 12. 安装 Windows或Linux系统
+=============================================
+
