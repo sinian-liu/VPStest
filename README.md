@@ -19,11 +19,11 @@
 
 快捷命令：s
 
-直接运行脚本（不保存文件）
+方式一：直接运行脚本（不保存文件）
 ```
 bash <(curl -sL https://raw.githubusercontent.com/sinian-liu/VPStest/main/system_info.sh)
 ```
-下载后运行（保存到本地）
+方式二：下载后运行（保存到本地）
 ```
 wget -O /root/onekey.sh https://github.com/sinian-liu/onekey/raw/main/onekey.sh && chmod +x /root/onekey.sh && /root/onekey.sh
 ```
