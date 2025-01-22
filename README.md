@@ -1,6 +1,3 @@
-```
-bash <(curl -sL https://raw.githubusercontent.com/sinian-liu/VPStest/main/system_info.sh)
-```
 ### VPS一键测试脚本
 
 
@@ -21,3 +18,7 @@ bash <(curl -sL https://raw.githubusercontent.com/sinian-liu/VPStest/main/system
 12. 安装 Windows或Linux系统
 
 快捷命令：s
+
+```
+bash <(curl -sL https://raw.githubusercontent.com/sinian-liu/VPStest/main/system_info.sh)
+```
